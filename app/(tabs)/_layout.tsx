@@ -1,33 +1,51 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarActiveTintColor: "#f0c040",
+        tabBarInactiveTintColor: "#aaa",
+        tabBarStyle: {
+          backgroundColor: "#0d2137",
+          borderTopColor: "#f0c040",
+          borderTopWidth: 2,
+          height: 65,
+          paddingBottom: 10,
+        },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
+        headerStyle: { backgroundColor: "#0d2137" },
+        headerTintColor: "#f0c040",
+        headerTitleStyle: { fontWeight: "bold" },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Mapa",
+          headerTitle: "🗺️ La Salle Oaxaca",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "map" : "map-outline"}
+              size={size}
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="places"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "Lugares",
+          headerTitle: "📍 Lugares Emblemáticos",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? "location" : "location-outline"}
+              size={size}
+              color={color}
+            />
+          ),
         }}
       />
     </Tabs>
