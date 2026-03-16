@@ -231,7 +231,11 @@ export default function MapScreen() {
         <View style={styles.overlay}>
           <View style={styles.card}>
             <Image
-              source={{ uri: selectedPlace?.image }}
+              source={
+                typeof selectedPlace?.image === "string"
+                  ? { uri: selectedPlace.image }
+                  : (selectedPlace?.image ?? undefined)
+              }
               style={styles.cardImage}
             />
             <View

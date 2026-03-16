@@ -16,7 +16,12 @@ export default function DetailScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Image source={{ uri: place.image }} style={styles.hero} />
+      <Image
+        source={
+          typeof place.image === "string" ? { uri: place.image } : place.image
+        }
+        style={styles.hero}
+      />
       <View style={[styles.badge, { backgroundColor: place.color }]}>
         <Text style={styles.badgeText}>{place.icon} Lugar Emblemático</Text>
       </View>

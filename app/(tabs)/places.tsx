@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    FlatList,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { PLACES } from "../../data/places";
 
@@ -23,11 +23,21 @@ export default function PlacesScreen() {
           <TouchableOpacity
             style={styles.card}
             onPress={() =>
-              router.push({ pathname: "/detail" as any, params: { id: item.id } })
+              router.push({
+                pathname: "/detail" as any,
+                params: { id: item.id },
+              })
             }
             activeOpacity={0.85}
           >
-            <Image source={{ uri: item.image }} style={styles.image} />
+            <Image
+              source={
+                typeof item.image === "string"
+                  ? { uri: item.image }
+                  : item.image
+              }
+              style={styles.image}
+            />
             <View style={[styles.colorBar, { backgroundColor: item.color }]} />
             <View style={styles.row}>
               <Text style={styles.emoji}>{item.icon}</Text>
