@@ -1,11 +1,33 @@
 import { useLocalSearchParams } from "expo-router";
-import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import YoutubePlayer from "react-native-youtube-iframe";
 import { PLACES } from "../data/places";
+
+const { width } = Dimensions.get("window");
+
+function getYoutubeId(url: string): string {
+  const match = url.match(
+    /(?:youtube\.be\/|v=|\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+  );
+  return match ? match[1] : "";
+}
 
 export default function DetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const place = PLACES.find((p) => p.id === id);
+  const [playing, setPlaying] = useState(false);
+
+  const onStateChange = useCallback((state: string) => {
+    if (state === "ended") setPlaying(false);
+  }, []);
 
   if (!place)
     return (
@@ -14,19 +36,26 @@ export default function DetailScreen() {
       </View>
     );
 
+  const videoId = getYoutubeId(place.video);
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Imagen hero */}
       <Image
         source={
           typeof place.image === "string" ? { uri: place.image } : place.image
         }
         style={styles.hero}
       />
+
       <View style={[styles.badge, { backgroundColor: place.color }]}>
         <Text style={styles.badgeText}>{place.icon} Lugar Emblemático</Text>
       </View>
+
       <View style={styles.content}>
         <Text style={styles.title}>{place.name}</Text>
+
+        {/* Coordenadas */}
         <View style={styles.coordsBox}>
           <Text style={styles.coordsTitle}>📍 Ubicación GPS</Text>
           <Text style={styles.coordsText}>
@@ -39,8 +68,28 @@ export default function DetailScreen() {
             Radio de detección: {place.radius} metros
           </Text>
         </View>
+
+        {/* Descripción */}
         <Text style={styles.sectionTitle}>Acerca del lugar</Text>
         <Text style={styles.description}>{place.description}</Text>
+
+        {/* Video de YouTube */}
+        {videoId ? (
+          <View style={styles.videoSection}>
+            <Text style={styles.sectionTitle}>🎬 Video</Text>
+            <View style={styles.videoWrapper}>
+              <YoutubePlayer
+                height={220}
+                width={width - 40}
+                play={playing}
+                videoId={videoId}
+                onChangeState={onStateChange}
+              />
+            </View>
+          </View>
+        ) : null}
+
+        {/* La Salle */}
         <View style={styles.lasalleBox}>
           <Text style={styles.lasalleTitle}>
             🏫 Universidad La Salle Oaxaca
@@ -99,6 +148,14 @@ const styles = StyleSheet.create({
     color: "#444",
     lineHeight: 26,
     marginBottom: 24,
+  },
+  videoSection: {
+    marginBottom: 24,
+  },
+  videoWrapper: {
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: "#000",
   },
   lasalleBox: {
     backgroundColor: "#f0c04022",
