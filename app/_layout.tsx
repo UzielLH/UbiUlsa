@@ -43,11 +43,8 @@ export default function RootLayout() {
       <Stack.Screen
         name="detail"
         options={{
-          headerShown: true,
-          headerStyle: { backgroundColor: "#0d2137" },
-          headerTintColor: "#f0c040",
-          headerTitle: "Detalle del Lugar",
-          presentation: "card",
+          headerShown: false,
+          presentation: "modal",
         }}
       />
     </Stack>
