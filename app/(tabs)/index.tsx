@@ -1,19 +1,23 @@
+import { BlurView } from "expo-blur";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Dimensions,
-  Image,
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    Modal,
+    Platform,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 import MapView, { Circle, Marker } from "react-native-maps";
+import Animated, {
+    FadeInDown,
+    FadeOutDown
+} from "react-native-reanimated";
+import { LucideIcon } from "../../components/ui/LucideIcon";
 import { PLACES, Place } from "../../data/places";
 
 const { height } = Dimensions.get("window");
@@ -104,7 +108,7 @@ export default function MapScreen() {
               const Notifications = require("expo-notifications");
               Notifications.scheduleNotificationAsync({
                 content: {
-                  title: `${place.icon} ${place.name}`,
+                  title: `Emblemático: ${place.name}`,
                   body: place.shortDesc,
                 },
                 trigger: null,
@@ -153,10 +157,10 @@ export default function MapScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-slate-900">
       <MapView
         ref={mapRef}
-        style={styles.map}
+        className="flex-1"
         mapType="satellite"
         initialRegion={{
           latitude: 17.022111,
@@ -194,13 +198,10 @@ export default function MapScreen() {
                 }}
               >
                 <View
-                  style={[
-                    styles.marker,
-                    { backgroundColor: place.color },
-                    styles.markerActive,
-                  ]}
+                  className="w-14 h-14 rounded-full items-center justify-center border-4 shadow-xl"
+                  style={{ backgroundColor: place.color, borderColor: "#fff" }}
                 >
-                  <Text style={{ fontSize: 26 }}>{place.icon}</Text>
+                  <LucideIcon name={place.icon} size={28} color="#fff" />
                 </View>
               </Marker>
             )}
@@ -209,176 +210,147 @@ export default function MapScreen() {
       </MapView>
 
       {/* Botón mi ubicación */}
-      <TouchableOpacity style={styles.myLocationBtn} onPress={goToMyLocation}>
-        <Text style={{ fontSize: 24 }}>📍</Text>
-      </TouchableOpacity>
-
-      {/* Badge de lugar cercano activo */}
-      {nearbyPlaceId && (
-        <View style={styles.nearbyBadge}>
-          <Text style={styles.nearbyText}>
-            🔔 {PLACES.find((p) => p.id === nearbyPlaceId)?.icon} ¡Estás cerca!
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.legend}>
-        <Text style={styles.legendText}>🏫 La Salle Oaxaca</Text>
+      <View className="absolute bottom-[85px] right-6 z-10 shadow-lg shadow-black/50">
+        <TouchableOpacity
+          className="w-14 h-14 rounded-full overflow-hidden"
+          onPress={goToMyLocation}
+        >
+          <BlurView
+            intensity={70}
+            tint="light"
+            className="flex-1 items-center justify-center bg-white/20"
+          >
+            <LucideIcon name="LocateFixed" size={24} color="#0f172a" />
+          </BlurView>
+        </TouchableOpacity>
       </View>
 
-      {/* Modal de información */}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.overlay}>
-          <View style={styles.card}>
-            <Image
-              source={
-                typeof selectedPlace?.image === "string"
-                  ? { uri: selectedPlace.image }
-                  : (selectedPlace?.image ?? undefined)
-              }
-              style={styles.cardImage}
-            />
-            <View
-              style={[styles.badge, { backgroundColor: selectedPlace?.color }]}
+      {/* Badge de lugar cercano activo */}
+      {nearbyPlaceId &&
+        (() => {
+          const p = PLACES.find((p) => p.id === nearbyPlaceId);
+          return p ? (
+            <Animated.View
+              entering={FadeInDown}
+              exiting={FadeOutDown}
+              style={{
+                position: "absolute",
+                top: 64,
+                width: "100%",
+                alignItems: "center",
+                zIndex: 10,
+                paddingHorizontal: 16,
+              }}
             >
-              <Text style={styles.badgeText}>
-                {selectedPlace?.icon} Lugar Emblemático
-              </Text>
-            </View>
-            <ScrollView style={{ paddingHorizontal: 20 }}>
-              <Text style={styles.cardTitle}>{selectedPlace?.name}</Text>
-              <Text style={styles.cardDesc}>{selectedPlace?.description}</Text>
-            </ScrollView>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.detailBtn}
-                onPress={() => {
-                  setModalVisible(false);
-                  router.push({
-                    pathname: "/detail",
-                    params: { id: selectedPlace?.id },
-                  });
-                }}
+              <View className="rounded-full overflow-hidden shadow-lg shadow-black/30">
+                <BlurView
+                  intensity={80}
+                  tint="dark"
+                  className="px-5 py-3 flex-row items-center gap-3"
+                >
+                  <LucideIcon name={p.icon} size={20} color={p.color} />
+                  <Text className="text-white font-bold">
+                    ¡Estás cerca de {p.name}!
+                  </Text>
+                </BlurView>
+              </View>
+            </Animated.View>
+          ) : null;
+        })()}
+
+      <View className="absolute top-16 left-4 z-10 rounded-full overflow-hidden">
+        <BlurView
+          intensity={60}
+          tint="light"
+          className="px-4 py-2 flex-row items-center gap-2"
+        >
+          <LucideIcon name="GraduationCap" size={18} color="#0f172a" />
+          <Text className="font-bold text-slate-800">La Salle Oaxaca</Text>
+        </BlurView>
+      </View>
+
+      {/* Modal de información Glassmorphism */}
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <View
+          className="flex-1 justify-end p-4 pb-8"
+          style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+        >
+          <Animated.View entering={FadeInDown.springify()}>
+            <View className="rounded-[32px] overflow-hidden">
+              <BlurView
+                intensity={90}
+                tint="dark"
+                className="w-full bg-slate-900/60 border border-white/20 pb-6"
               >
-                <Text style={styles.detailBtnText}>Ver más →</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.closeBtn}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeBtnText}>Cerrar</Text>
-              </TouchableOpacity>
+                {selectedPlace && (
+                  <View>
+                    <Image
+                      source={
+                        typeof selectedPlace.image === "string"
+                          ? { uri: selectedPlace.image }
+                          : selectedPlace.image
+                      }
+                      className="w-full h-48"
+                    />
+
+                    <View className="px-6 -mt-8 mb-4 flex-row items-center space-x-3">
+                      <View
+                        className="w-16 h-16 rounded-2xl items-center justify-center shadow-lg"
+                        style={{ backgroundColor: selectedPlace.color }}
+                      >
+                        <LucideIcon
+                          name={selectedPlace.icon}
+                          size={32}
+                          color="#fff"
+                        />
+                      </View>
+                    </View>
+
+                    <View className="px-6">
+                      <Text className="text-2xl font-bold text-white mb-2">
+                        {selectedPlace.name}
+                      </Text>
+                      <Text
+                        className="text-slate-300 text-sm leading-relaxed mb-6"
+                        numberOfLines={3}
+                      >
+                        {selectedPlace.description}
+                      </Text>
+
+                      <View className="flex-row gap-4">
+                        <TouchableOpacity
+                          className="flex-1 py-4 rounded-2xl"
+                          style={{ backgroundColor: selectedPlace.color }}
+                          onPress={() => {
+                            setModalVisible(false);
+                            router.push({
+                              pathname: "/detail",
+                              params: { id: selectedPlace.id },
+                            });
+                          }}
+                        >
+                          <Text className="text-white text-center font-bold text-base">
+                            Ver detalles
+                          </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          className="py-4 px-6 rounded-2xl bg-white/10"
+                          onPress={() => setModalVisible(false)}
+                        >
+                          <Text className="text-white font-semibold">
+                            Cerrar
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                )}
+              </BlurView>
             </View>
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  map: { flex: 1 },
-  marker: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 3,
-    borderColor: "#fff",
-    elevation: 5,
-  },
-  markerActive: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    borderColor: "#f0c040",
-    borderWidth: 4,
-    elevation: 10,
-  },
-  myLocationBtn: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    backgroundColor: "#0d2137",
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 6,
-    borderWidth: 2,
-    borderColor: "#f0c040",
-  },
-  nearbyBadge: {
-    position: "absolute",
-    bottom: 100,
-    alignSelf: "center",
-    backgroundColor: "#f0c040",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
-    elevation: 8,
-  },
-  nearbyText: {
-    color: "#0d2137",
-    fontWeight: "900",
-    fontSize: 14,
-  },
-  legend: {
-    position: "absolute",
-    top: 16,
-    left: 16,
-    backgroundColor: "#0d2137ee",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#f0c040",
-  },
-  legendText: { color: "#f0c040", fontWeight: "700", fontSize: 13 },
-  overlay: { flex: 1, backgroundColor: "#000a", justifyContent: "flex-end" },
-  card: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    overflow: "hidden",
-    maxHeight: height * 0.75,
-  },
-  cardImage: { width: "100%", height: 200, resizeMode: "cover" },
-  badge: {
-    alignSelf: "flex-start",
-    margin: 16,
-    marginBottom: 0,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  badgeText: { color: "#fff", fontWeight: "800", fontSize: 12 },
-  cardTitle: {
-    fontSize: 22,
-    fontWeight: "900",
-    color: "#0d2137",
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  cardDesc: { fontSize: 15, color: "#444", lineHeight: 23, marginBottom: 16 },
-  modalButtons: { flexDirection: "row", padding: 16, gap: 12 },
-  detailBtn: {
-    flex: 1,
-    backgroundColor: "#0d2137",
-    padding: 14,
-    borderRadius: 14,
-    alignItems: "center",
-  },
-  detailBtnText: { color: "#f0c040", fontWeight: "800", fontSize: 15 },
-  closeBtn: {
-    flex: 1,
-    backgroundColor: "#eee",
-    padding: 14,
-    borderRadius: 14,
-    alignItems: "center",
-  },
-  closeBtnText: { color: "#333", fontWeight: "700", fontSize: 15 },
-});
