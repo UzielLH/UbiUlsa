@@ -25,7 +25,7 @@ export const PLACES: Place[] = [
     longitude: -96.7213058390023,
     radius: 10,
     color: "#1a3a5c",
-    icon: "🌳",
+    icon: "TreePine",
   },
   {
     id: "2",
@@ -39,7 +39,7 @@ export const PLACES: Place[] = [
     longitude: -96.7213869153107,
     radius: 22,
     color: "#f97313",
-    icon: "📚",
+    icon: "BookOpen",
   },
   {
     id: "3",
@@ -53,7 +53,7 @@ export const PLACES: Place[] = [
     longitude: -96.721047,
     radius: 15,
     color: "#ff242b",
-    icon: "🙏",
+    icon: "Heart",
   },
   {
     id: "4",
@@ -67,7 +67,7 @@ export const PLACES: Place[] = [
     longitude: -96.721042,
     radius: 10,
     color: "#e0541c",
-    icon: "🎭",
+    icon: "Ticket",
   },
 
   {
@@ -82,7 +82,7 @@ export const PLACES: Place[] = [
     longitude: -96.720637257845,
     radius: 10,
     color: "#2472e7",
-    icon: "🔭",
+    icon: "Telescope",
   },
 
   {
@@ -97,7 +97,7 @@ export const PLACES: Place[] = [
     longitude: -96.72150092915622,
     radius: 10,
     color: "#ff62ae",
-    icon: "💃",
+    icon: "Music",
   },
 
   {
@@ -112,7 +112,7 @@ export const PLACES: Place[] = [
     longitude: -96.72069090201141,
     radius: 20,
     color: "#eae749",
-    icon: "🏗️",
+    icon: "Hammer",
   },
 
   {
@@ -127,7 +127,7 @@ export const PLACES: Place[] = [
     longitude: -96.7215572555471,
     radius: 10,
     color: "#7b4bff",
-    icon: "🏛️",
+    icon: "Landmark",
   },
 
   {
@@ -142,7 +142,7 @@ export const PLACES: Place[] = [
     longitude: -96.72160821751366,
     radius: 30,
     color: "#ff4747",
-    icon: "🏀",
+    icon: "Trophy",
   },
 
   {
@@ -157,6 +157,6 @@ export const PLACES: Place[] = [
     longitude: -96.72416704491722,
     radius: 20,
     color: "#002f80",
-    icon: "🦴",
+    icon: "Bone",
   },
 ];
