@@ -4,19 +4,16 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Dimensions,
-    Image,
-    Modal,
-    Platform,
-    Text,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  Modal,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import MapView, { Circle, Marker } from "react-native-maps";
-import Animated, {
-    FadeInDown,
-    FadeOutDown
-} from "react-native-reanimated";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { LucideIcon } from "../../components/ui/LucideIcon";
 import { PLACES, Place } from "../../data/places";
 
@@ -51,6 +48,7 @@ export default function MapScreen() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [nearbyPlaceId, setNearbyPlaceId] = useState<string | null>(null);
+  const [mapType, setMapType] = useState<"standard" | "satellite">("standard");
 
   useEffect(() => {
     let subscription: Location.LocationSubscription;
@@ -161,7 +159,7 @@ export default function MapScreen() {
       <MapView
         ref={mapRef}
         className="flex-1"
-        mapType="satellite"
+        mapType={mapType}
         initialRegion={{
           latitude: 17.022111,
           longitude: -96.72075,
@@ -209,20 +207,36 @@ export default function MapScreen() {
         ))}
       </MapView>
 
-      {/* Botón mi ubicación */}
-      <View className="absolute bottom-[85px] right-6 z-10 shadow-lg shadow-black/50">
-        <TouchableOpacity
-          className="w-14 h-14 rounded-full overflow-hidden"
-          onPress={goToMyLocation}
-        >
+      {/* Controles de mapa: Tipo de vista y Mi ubicación (Estilo cápsula) */}
+      <View className="absolute top-16 right-4 z-10 pt-safe">
+        <View className="rounded-[20px] overflow-hidden shadow-lg shadow-black/40">
           <BlurView
-            intensity={70}
-            tint="light"
-            className="flex-1 items-center justify-center bg-white/20"
+            intensity={90}
+            tint="dark"
+            className="w-12 items-center flex-col py-1"
+            style={{ backgroundColor: "rgba(15, 23, 42, 0.4)" }}
           >
-            <LucideIcon name="LocateFixed" size={24} color="#0f172a" />
+            <TouchableOpacity
+              className="w-12 h-12 items-center justify-center p-2 mb-1"
+              onPress={() =>
+                setMapType((prev) =>
+                  prev === "standard" ? "satellite" : "standard",
+                )
+              }
+            >
+              <LucideIcon name="Map" size={22} color="#f8fafc" />
+            </TouchableOpacity>
+
+            <View className="h-[1px] w-8 bg-white/20" />
+
+            <TouchableOpacity
+              className="w-12 h-12 items-center justify-center p-2 mt-1"
+              onPress={goToMyLocation}
+            >
+              <LucideIcon name="Navigation" size={22} color="#f8fafc" />
+            </TouchableOpacity>
           </BlurView>
-        </TouchableOpacity>
+        </View>
       </View>
 
       {/* Badge de lugar cercano activo */}
