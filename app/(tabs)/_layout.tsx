@@ -3,6 +3,18 @@ import { Tabs } from "expo-router";
 import { Platform, StyleSheet } from "react-native";
 import { LucideIcon } from "../../components/ui/LucideIcon";
 
+// Importación dinámica para prevenir errores en Android o si no está soportado (Expo Go)
+let Host: any, Spacer: any, glassEffect: any;
+if (Platform.OS === "ios") {
+  try {
+    const ExpoUISwiftUI = require("@expo/ui/swift-ui");
+    const ExpoUIModifiers = require("@expo/ui/swift-ui/modifiers");
+    Host = ExpoUISwiftUI.Host;
+    Spacer = ExpoUISwiftUI.Spacer;
+    glassEffect = ExpoUIModifiers.glassEffect;
+  } catch(e) {}
+}
+
 export default function TabLayout() {
   return (
     <Tabs
@@ -17,14 +29,33 @@ export default function TabLayout() {
           backgroundColor: "transparent",
           ...(Platform.OS === "android" ? { height: 65, paddingBottom: 8 } : {}),
         },
-        tabBarBackground: () => (
-          <BlurView
-            // systemChromeMaterialDark es el material EXACTO que usa Apple nativamente en el TabBar y NavBars para el "Liquid Glass"
-            tint={Platform.OS === "ios" ? "systemChromeMaterialDark" : "dark"}
-            intensity={Platform.OS === "ios" ? 100 : 80}
-            style={StyleSheet.absoluteFill}
-          />
-        ),
+        tabBarBackground: () => {
+          // El nuevo Liquid Glass de iOS 26 usando Expo UI (Swift UI Primitives)
+          if (Platform.OS === "ios" && Host && Spacer && glassEffect) {
+            return (
+              <Host style={StyleSheet.absoluteFill}>
+                <Spacer 
+                  modifiers={[
+                    glassEffect({
+                      glass: {
+                        variant: "clear", // Propiedad liquid glass documentada
+                      },
+                    })
+                  ]}
+                />
+              </Host>
+            );
+          }
+
+          // Fallback en Android/Web
+          return (
+            <BlurView
+              tint={Platform.OS === "ios" ? "systemChromeMaterialDark" : "dark"}
+              intensity={Platform.OS === "ios" ? 100 : 80}
+              style={StyleSheet.absoluteFill}
+            />
+          );
+        },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "600"
