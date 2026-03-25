@@ -26,7 +26,7 @@ export default function PlacesScreen() {
             <TouchableOpacity
               onPress={() =>
                 router.push({
-                  pathname: "/detail" as any,
+                  pathname: "/detail",
                   params: { id: item.id },
                 })
               }

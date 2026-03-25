@@ -4,13 +4,13 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Dimensions,
-  Image,
-  Modal,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    Modal,
+    Platform,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import MapView, { Circle, Marker } from "react-native-maps";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
@@ -48,6 +48,8 @@ export default function MapScreen() {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [nearbyPlaceId, setNearbyPlaceId] = useState<string | null>(null);
+  const [hideNearbyBadge, setHideNearbyBadge] = useState<boolean>(false);
+  const currentNearbyIdRef = useRef<string | null>(null);
   const [mapType, setMapType] = useState<"standard" | "satellite">("standard");
 
   useEffect(() => {
@@ -95,7 +97,13 @@ export default function MapScreen() {
 
       if (dist <= place.radius) {
         foundNearby = true;
-        setNearbyPlaceId(place.id);
+
+        // Si entramos a un nuevo lugar distinto al anterior, restablecemos el estado de ocultar la alerta
+        if (currentNearbyIdRef.current !== place.id) {
+          currentNearbyIdRef.current = place.id;
+          setNearbyPlaceId(place.id);
+          setHideNearbyBadge(false);
+        }
 
         // Solo mostrar modal si no se ha notificado antes
         if (!notifiedPlaces.current.has(place.id)) {
@@ -132,13 +140,15 @@ export default function MapScreen() {
         if (notifiedPlaces.current.has(place.id)) {
           notifiedPlaces.current.delete(place.id);
         }
-        if (nearbyPlaceId === place.id) {
+        if (currentNearbyIdRef.current === place.id) {
+          currentNearbyIdRef.current = null;
           setNearbyPlaceId(null);
         }
       }
     }
 
-    if (!foundNearby) {
+    if (!foundNearby && currentNearbyIdRef.current !== null) {
+      currentNearbyIdRef.current = null;
       setNearbyPlaceId(null);
     }
   };
@@ -190,16 +200,32 @@ export default function MapScreen() {
                   latitude: place.latitude,
                   longitude: place.longitude,
                 }}
-                onPress={() => {
+                tracksViewChanges={false}
+                anchor={{ x: 0.5, y: 0.5 }}
+                onPress={(e) => {
+                  e.stopPropagation();
                   setSelectedPlace(place);
                   setModalVisible(true);
                 }}
               >
                 <View
-                  className="w-14 h-14 rounded-full items-center justify-center border-4 shadow-xl"
-                  style={{ backgroundColor: place.color, borderColor: "#fff" }}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 22,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderWidth: 3,
+                    backgroundColor: place.color,
+                    borderColor: "#fff",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.4,
+                    shadowRadius: 4,
+                    elevation: 5,
+                  }}
                 >
-                  <LucideIcon name={place.icon} size={28} color="#fff" />
+                  <LucideIcon name={place.icon} size={22} color="#fff" />
                 </View>
               </Marker>
             )}
@@ -241,6 +267,7 @@ export default function MapScreen() {
 
       {/* Badge de lugar cercano activo */}
       {nearbyPlaceId &&
+        !hideNearbyBadge &&
         (() => {
           const p = PLACES.find((p) => p.id === nearbyPlaceId);
           return p ? (
@@ -249,7 +276,7 @@ export default function MapScreen() {
               exiting={FadeOutDown}
               style={{
                 position: "absolute",
-                top: 64,
+                top: 110, // Bajado para que no estorbe con el logo ni el Notch/Isla Dinámica
                 width: "100%",
                 alignItems: "center",
                 zIndex: 10,
@@ -263,9 +290,16 @@ export default function MapScreen() {
                   className="px-5 py-3 flex-row items-center gap-3"
                 >
                   <LucideIcon name={p.icon} size={20} color={p.color} />
-                  <Text className="text-white font-bold">
+                  <Text className="text-white font-bold mr-2">
                     ¡Estás cerca de {p.name}!
                   </Text>
+                  <TouchableOpacity
+                    onPress={() => setHideNearbyBadge(true)}
+                    className="bg-white/20 rounded-full p-1 ml-1"
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <LucideIcon name="X" size={14} color="#fff" />
+                  </TouchableOpacity>
                 </BlurView>
               </View>
             </Animated.View>
