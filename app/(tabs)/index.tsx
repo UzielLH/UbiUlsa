@@ -22,7 +22,21 @@ const isExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 const isAndroidExpoGo = Platform.OS === "android" && isExpoGo;
 
+// 🛑 MOCK DE UBICACIÓN PARA PRUEBAS (En la Biblioteca)
+const MOCK_LOCATION = true;
+const MOCK_COORDS: Location.LocationObjectCoords = {
+  latitude: 17.021698983644605,
+  longitude: -96.7213058390023,
+  accuracy: 5,
+  altitude: null,
+  heading: null,
+  speed: null,
+  altitudeAccuracy: null,
+};
+
 function getDistance(
+  // ... (resto sin cambios hasta useEffect)
+
   lat1: number,
   lon1: number,
   lat2: number,
@@ -57,6 +71,13 @@ export default function MapScreen() {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
+
+      // 🛑 SI ESTAMOS EN MODO MOCK, FORZAMOS LA UBICACIÓN Y NO USAMOS EL GPS REAL
+      if (MOCK_LOCATION) {
+        setLocation(MOCK_COORDS);
+        checkProximity(MOCK_COORDS);
+        return;
+      }
 
       // Obtener posición inicial
       const initial = await Location.getCurrentPositionAsync({
@@ -111,14 +132,14 @@ export default function MapScreen() {
 
           if (!isAndroidExpoGo) {
             try {
-              const Notifications = require("expo-notifications");
-              Notifications.scheduleNotificationAsync({
-                content: {
-                  title: `Emblemático: ${place.name}`,
-                  body: place.shortDesc,
-                },
-                trigger: null,
-              });
+              // const Notifications = require("expo-notifications");
+              // Notifications.scheduleNotificationAsync({
+              //   content: {
+              //     title: `Emblemático: ${place.name}`,
+              //     body: place.shortDesc,
+              //   },
+              //   trigger: null,
+              // });
             } catch (error) {
               console.warn("Failed to schedule notification:", error);
             }
@@ -364,6 +385,37 @@ export default function MapScreen() {
                       >
                         {selectedPlace.description}
                       </Text>
+
+                      {/* Botón AR — solo si el lugar tiene modelo 3D */}
+                      {selectedPlace.model && (
+                        <TouchableOpacity
+                          className="flex-row items-center justify-center gap-2 py-3 rounded-2xl mb-3"
+                          style={{
+                            backgroundColor: selectedPlace.color + "22",
+                            borderWidth: 1.5,
+                            borderColor: selectedPlace.color,
+                          }}
+                          onPress={() => {
+                            setModalVisible(false);
+                            router.push({
+                              pathname: "/visor-ar" as any,
+                              params: { id: selectedPlace.id },
+                            });
+                          }}
+                        >
+                          <LucideIcon
+                            name="Box"
+                            color={selectedPlace.color}
+                            size={20}
+                          />
+                          <Text
+                            className="font-bold text-base"
+                            style={{ color: selectedPlace.color }}
+                          >
+                            Ver modelo 3D / AR
+                          </Text>
+                        </TouchableOpacity>
+                      )}
 
                       <View className="flex-row gap-4">
                         <TouchableOpacity

@@ -9,18 +9,18 @@ const isExpoGo =
 // Configure notifications handler only if not in Expo Go on Android
 if (Platform.OS !== "android" || !isExpoGo) {
   try {
-    const Notifications = require("expo-notifications");
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-        shouldShowBanner: true,
-        shouldShowList: true,
-      }),
-    });
+    // const Notifications = require("expo-notifications");
+    // Notifications.setNotificationHandler({
+    //   handleNotification: async () => ({
+    //     shouldShowAlert: true,
+    //     shouldPlaySound: true,
+    //     shouldSetBadge: false,
+    //     shouldShowBanner: true,
+    //     shouldShowList: true,
+    //   }),
+    // });
   } catch (error) {
-    console.warn("Failed to load expo-notifications:", error);
+    // console.warn("Failed to load expo-notifications:", error);
   }
 }
 
@@ -29,10 +29,10 @@ export default function RootLayout() {
     // Check permissions only if not in Expo Go on Android
     if (Platform.OS !== "android" || !isExpoGo) {
       try {
-        const Notifications = require("expo-notifications");
-        Notifications.requestPermissionsAsync();
+        // const Notifications = require("expo-notifications");
+        // Notifications.requestPermissionsAsync();
       } catch (error) {
-        console.warn("Failed to request permissions:", error);
+        // console.warn("Failed to request permissions:", error);
       }
     }
   }, []);
@@ -45,6 +45,13 @@ export default function RootLayout() {
         options={{
           headerShown: false,
           presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="visor-ar"
+        options={{
+          headerShown: false,
+          presentation: "fullScreenModal",
         }}
       />
     </Stack>

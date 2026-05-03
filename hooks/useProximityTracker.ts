@@ -1,19 +1,23 @@
-import * as Location from 'expo-location';
-import { useEffect, useRef, useState } from 'react';
-import { PLACES } from '../data/places';
-import { getDistance } from '../utils/location';
-import Constants, { ExecutionEnvironment } from 'expo-constants';
-import { Platform } from 'react-native';
+import Constants, { ExecutionEnvironment } from "expo-constants";
+import * as Location from "expo-location";
+import { useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
+import { PLACES } from "../data/places";
+import { getDistance } from "../utils/location";
 
-const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
-const isAndroidExpoGo = Platform.OS === 'android' && isExpoGo;
+const isExpoGo =
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+const isAndroidExpoGo = Platform.OS === "android" && isExpoGo;
 
 export function useProximityTracker() {
-  const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
+  const [location, setLocation] =
+    useState<Location.LocationObjectCoords | null>(null);
   const [nearbyPlaceId, setNearbyPlaceId] = useState<string | null>(null);
   const [hideNearbyBadge, setHideNearbyBadge] = useState<boolean>(false);
-  const [permissionStatus, setPermissionStatus] = useState<Location.PermissionStatus | 'loading'>('loading');
-  
+  const [permissionStatus, setPermissionStatus] = useState<
+    Location.PermissionStatus | "loading"
+  >("loading");
+
   const currentNearbyIdRef = useRef<string | null>(null);
   const notifiedPlacesRef = useRef<Set<string>>(new Set());
   const locationRef = useRef<Location.LocationObjectCoords | null>(null);
@@ -25,8 +29,8 @@ export function useProximityTracker() {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         setPermissionStatus(status);
-        
-        if (status !== 'granted') return;
+
+        if (status !== "granted") return;
 
         const initial = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.BestForNavigation,
@@ -46,10 +50,10 @@ export function useProximityTracker() {
               locationRef.current = loc.coords;
               checkProximity(loc.coords);
             }
-          }
+          },
         );
       } catch (error) {
-        console.warn('Error starting location tracking:', error);
+        console.warn("Error starting location tracking:", error);
       }
     })();
 
@@ -64,7 +68,7 @@ export function useProximityTracker() {
         coords.latitude,
         coords.longitude,
         place.latitude,
-        place.longitude
+        place.longitude,
       );
 
       if (dist <= place.radius) {
@@ -74,7 +78,7 @@ export function useProximityTracker() {
           currentNearbyIdRef.current = place.id;
           setNearbyPlaceId(place.id);
           setHideNearbyBadge(false);
-          
+
           // Opcional: Actualizar el estado de la ubicación solo cuando hay un cambio de lugar
           // para forzar un re-render si es necesario mostrar algo en el mapa basado en 'location'
           setLocation(coords);
@@ -85,16 +89,16 @@ export function useProximityTracker() {
 
           if (!isAndroidExpoGo) {
             try {
-              const Notifications = require('expo-notifications');
-              Notifications.scheduleNotificationAsync({
-                content: {
-                  title: `Emblemático: ${place.name}`,
-                  body: place.shortDesc,
-                },
-                trigger: null,
-              });
+              // const Notifications = require('expo-notifications');
+              // Notifications.scheduleNotificationAsync({
+              //   content: {
+              //     title: `Emblemático: ${place.name}`,
+              //     body: place.shortDesc,
+              //   },
+              //   trigger: null,
+              // });
             } catch (error) {
-              console.warn('Failed to schedule notification:', error);
+              console.warn("Failed to schedule notification:", error);
             }
           }
         }
@@ -126,4 +130,3 @@ export function useProximityTracker() {
     getLatestLocation,
   };
 }
-

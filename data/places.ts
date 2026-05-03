@@ -10,6 +10,8 @@ export interface Place {
   radius: number;
   color: string;
   icon: string;
+  model?: any;
+  iosModel?: any;
 }
 
 export const PLACES: Place[] = [
@@ -26,6 +28,8 @@ export const PLACES: Place[] = [
     radius: 10,
     color: "#1a3a5c",
     icon: "TreePine",
+    model: require("../assets/Models/arbol_low_poly.glb"),
+    iosModel: require("../assets/Models/arbol_low_poly.usdz"),
   },
   {
     id: "2",
@@ -40,6 +44,7 @@ export const PLACES: Place[] = [
     radius: 22,
     color: "#f97313",
     icon: "BookOpen",
+    model: require("../assets/Models/libro_aperto.glb"),
   },
   {
     id: "3",
@@ -54,6 +59,7 @@ export const PLACES: Place[] = [
     radius: 15,
     color: "#ff242b",
     icon: "Heart",
+    model: require("../assets/Models/estatua__statue.glb"),
   },
   {
     id: "4",
@@ -83,6 +89,7 @@ export const PLACES: Place[] = [
     radius: 10,
     color: "#2472e7",
     icon: "Telescope",
+    model: require("../assets/Models/telescopio.glb"),
   },
 
   {
@@ -98,6 +105,7 @@ export const PLACES: Place[] = [
     radius: 10,
     color: "#ff62ae",
     icon: "Music",
+    model: require("../assets/Models/danza.glb"),
   },
 
   {
@@ -113,6 +121,7 @@ export const PLACES: Place[] = [
     radius: 20,
     color: "#eae749",
     icon: "Hammer",
+    model: require("../assets/Models/simple_robot.glb"),
   },
 
   {
@@ -143,6 +152,7 @@ export const PLACES: Place[] = [
     radius: 30,
     color: "#ff4747",
     icon: "Trophy",
+    model: require("../assets/Models/kit_pesas_lowpolykit_dumbells.glb"),
   },
 
   {
@@ -158,5 +168,6 @@ export const PLACES: Place[] = [
     radius: 20,
     color: "#002f80",
     icon: "Bone",
+    model: require("../assets/Models/huesos_de_la_mano.glb"),
   },
 ];

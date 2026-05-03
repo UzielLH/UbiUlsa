@@ -180,6 +180,33 @@ export default function DetailScreen() {
               </View>
             )}
 
+            {/* Botón AR — solo si el lugar tiene modelo 3D */}
+            {place.model && (
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    pathname: "/visor-ar" as any,
+                    params: { id: place.id },
+                  })
+                }
+                className="flex-row items-center justify-center gap-3 py-4 rounded-3xl mb-8"
+                style={{
+                  backgroundColor: place.color + "22",
+                  borderWidth: 2,
+                  borderColor: place.color,
+                }}
+              >
+                <LucideIcon name="Box" color={place.color} size={24} />
+                <Text
+                  className="font-extrabold text-lg"
+                  style={{ color: place.color }}
+                >
+                  Ver en 3D / Realidad Aumentada
+                </Text>
+              </TouchableOpacity>
+            )}
+
             <View
               className="px-5 py-6 rounded-3xl mb-8"
               style={{
