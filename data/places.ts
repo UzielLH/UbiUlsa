@@ -45,6 +45,7 @@ export const PLACES: Place[] = [
     color: "#f97313",
     icon: "BookOpen",
     model: require("../assets/Models/libro_aperto.glb"),
+    iosModel: require("../assets/Models/libro.usdz"),
   },
   {
     id: "3",
@@ -60,6 +61,7 @@ export const PLACES: Place[] = [
     color: "#ff242b",
     icon: "Heart",
     model: require("../assets/Models/estatua__statue.glb"),
+    iosModel: require("../assets/Models/estatua__statue.usdz"),
   },
   {
     id: "4",
@@ -74,6 +76,8 @@ export const PLACES: Place[] = [
     radius: 10,
     color: "#e0541c",
     icon: "Ticket",
+    model: require("../assets/Models/guy_fawkes_mask.glb"),
+    iosModel: require("../assets/Models/guy_fawkes_mask.usdz"),
   },
 
   {
@@ -90,6 +94,7 @@ export const PLACES: Place[] = [
     color: "#2472e7",
     icon: "Telescope",
     model: require("../assets/Models/telescopio.glb"),
+    iosModel: require("../assets/Models/telescopio.usdz"),
   },
 
   {
@@ -106,6 +111,7 @@ export const PLACES: Place[] = [
     color: "#ff62ae",
     icon: "Music",
     model: require("../assets/Models/danza.glb"),
+    iosModel: require("../assets/Models/danza.usdz"),
   },
 
   {
@@ -122,6 +128,7 @@ export const PLACES: Place[] = [
     color: "#eae749",
     icon: "Hammer",
     model: require("../assets/Models/simple_robot.glb"),
+    iosModel: require("../assets/Models/simple_robot.usdz"),
   },
 
   {
@@ -137,6 +144,8 @@ export const PLACES: Place[] = [
     radius: 10,
     color: "#7b4bff",
     icon: "Landmark",
+    model: require("../assets/Models/estatua__statue.glb"),
+    iosModel: require("../assets/Models/estatua__statue.usdz"),
   },
 
   {
@@ -153,6 +162,7 @@ export const PLACES: Place[] = [
     color: "#ff4747",
     icon: "Trophy",
     model: require("../assets/Models/kit_pesas_lowpolykit_dumbells.glb"),
+    iosModel: require("../assets/Models/gimnasio.usdz"),
   },
 
   {
@@ -169,5 +179,6 @@ export const PLACES: Place[] = [
     color: "#002f80",
     icon: "Bone",
     model: require("../assets/Models/huesos_de_la_mano.glb"),
+    iosModel: require("../assets/Models/huesos.usdz"),
   },
 ];

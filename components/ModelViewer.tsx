@@ -3,17 +3,16 @@ import * as FileSystem from "expo-file-system/legacy";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  Platform,
   StyleSheet,
   Text,
-  View,
-  Linking,
-  Alert,
   TouchableOpacity,
-  Platform,
+  View
 } from "react-native";
+import FileViewer from "react-native-file-viewer";
 import { WebView } from "react-native-webview";
 import { LucideIcon } from "./ui/LucideIcon";
-import FileViewer from "react-native-file-viewer";
 
 interface ModelViewerProps {
   /** Asset requerido con require(), e.g. require("../assets/Models/arbol_low_poly.glb") */
@@ -156,13 +155,14 @@ export default function ModelViewer({
         }}
       />
 
-      {((Platform.OS === "ios" && iosUri) || (Platform.OS === "android" && androidUri)) && (
+      {((Platform.OS === "ios" && iosUri) ||
+        (Platform.OS === "android" && androidUri)) && (
         <TouchableOpacity
           style={styles.floatingArButton}
           onPress={() => {
             const uriToOpen = Platform.OS === "ios" ? iosUri : androidUri;
             if (!uriToOpen) return;
-            
+
             FileViewer.open(uriToOpen).catch((err) => {
               console.error("Error abriendo Visor Nativo:", err);
               Alert.alert(

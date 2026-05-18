@@ -4,13 +4,13 @@ import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Dimensions,
-    Image,
-    Modal,
-    Platform,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  Modal,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import MapView, { Circle, Marker } from "react-native-maps";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
@@ -84,7 +84,7 @@ export default function MapScreen() {
         accuracy: Location.Accuracy.BestForNavigation,
       });
       setLocation(initial.coords);
-      
+
       // Animar al usuario en cuanto obtenemos su ubicación en lugar de la ubicación hardcodeada
       mapRef.current?.animateToRegion({
         latitude: initial.coords.latitude,
