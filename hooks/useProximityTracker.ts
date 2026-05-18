@@ -46,7 +46,7 @@ export function useProximityTracker() {
             mayShowUserSettingsDialog: true,
           },
           (loc) => {
-            if (loc.coords.accuracy && loc.coords.accuracy <= 10) {
+            if (loc.coords.accuracy && loc.coords.accuracy <= 50) {
               locationRef.current = loc.coords;
               checkProximity(loc.coords);
             }

@@ -23,7 +23,7 @@ const isExpoGo =
 const isAndroidExpoGo = Platform.OS === "android" && isExpoGo;
 
 // 🛑 MOCK DE UBICACIÓN PARA PRUEBAS (En la Biblioteca)
-const MOCK_LOCATION = true;
+const MOCK_LOCATION = false;
 const MOCK_COORDS: Location.LocationObjectCoords = {
   latitude: 17.021698983644605,
   longitude: -96.7213058390023,
@@ -84,6 +84,14 @@ export default function MapScreen() {
         accuracy: Location.Accuracy.BestForNavigation,
       });
       setLocation(initial.coords);
+      
+      // Animar al usuario en cuanto obtenemos su ubicación en lugar de la ubicación hardcodeada
+      mapRef.current?.animateToRegion({
+        latitude: initial.coords.latitude,
+        longitude: initial.coords.longitude,
+        latitudeDelta: 0.002,
+        longitudeDelta: 0.002,
+      });
 
       // Escuchar cambios de posición
       subscription = await Location.watchPositionAsync(
@@ -94,8 +102,8 @@ export default function MapScreen() {
           mayShowUserSettingsDialog: true, // pide activar GPS de alta precisión
         },
         (loc) => {
-          // Solo actualiza si la precisión es buena (menos de 10 metros)
-          if (loc.coords.accuracy && loc.coords.accuracy <= 10) {
+          // Ampliamos la tolerancia de precisión a 50 metros ya que 10 metros es muy estricto para GPS móvil real
+          if (loc.coords.accuracy && loc.coords.accuracy <= 50) {
             setLocation(loc.coords);
             checkProximity(loc.coords);
           }

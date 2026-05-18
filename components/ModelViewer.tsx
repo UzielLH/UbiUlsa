@@ -33,6 +33,7 @@ export default function ModelViewer({
   accentColor = "#22c55e",
 }: ModelViewerProps) {
   const [modelUri, setModelUri] = useState<string | null>(null);
+  const [androidUri, setAndroidUri] = useState<string | null>(null);
   const [iosUri, setIosUri] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +43,7 @@ export default function ModelViewer({
         const asset = Asset.fromModule(modelAsset);
         await asset.downloadAsync();
         if (asset.localUri) {
+          setAndroidUri(asset.localUri);
           // Leemos el archivo físico como Base64 para saltarnos el CORS de WebView
           // y evitar que el servidor de desarrollo crashee.
           const base64 = await FileSystem.readAsStringAsync(asset.localUri, {
@@ -122,10 +124,7 @@ export default function ModelViewer({
       <body>
         <model-viewer
           src="${modelUri}"
-          ${iosUri ? `ios-src="${iosUri}"` : ""}
           alt="${alt}"
-          ar
-          ar-modes="scene-viewer webxr quick-look"
           camera-controls
           auto-rotate
           auto-rotate-delay="500"
@@ -153,39 +152,18 @@ export default function ModelViewer({
         allowUniversalAccessFromFileURLs
         mixedContentMode="always"
         onShouldStartLoadWithRequest={(request) => {
-          // Interceptar visor ARCore de Android
-          if (request.url.startsWith("intent://")) {
-            Linking.openURL(request.url).catch(() => {
-              console.warn("No se pudo abrir el visor AR.");
-              Alert.alert(
-                "AR no disponible",
-                "Parece que tu dispositivo no tiene los Servicios de Google Play para RA.",
-              );
-            });
-            return false;
-          }
-
-          // Interceptar visor AR Quick Look de iOS
-          if (request.url.includes(".usdz")) {
-            Linking.openURL(request.url).catch((err) => {
-              console.error("Error abriendo Quick Look:", err);
-              Alert.alert(
-                "AR no disponible",
-                "No se pudo abrir el visor AR de iOS.",
-              );
-            });
-            return false;
-          }
-
           return true;
         }}
       />
 
-      {Platform.OS === "ios" && iosUri && (
+      {((Platform.OS === "ios" && iosUri) || (Platform.OS === "android" && androidUri)) && (
         <TouchableOpacity
           style={styles.floatingArButton}
           onPress={() => {
-            FileViewer.open(iosUri).catch((err) => {
+            const uriToOpen = Platform.OS === "ios" ? iosUri : androidUri;
+            if (!uriToOpen) return;
+            
+            FileViewer.open(uriToOpen).catch((err) => {
               console.error("Error abriendo Visor Nativo:", err);
               Alert.alert(
                 "AR no disponible",
